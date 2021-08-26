@@ -25,7 +25,6 @@ def do_deploy(archive_path):
         run("rm -rf " + pathf + "/web_static/")
         run("rm -rf /data/web_static/current")
         run("ln -sf " + pathf + "/" + " /data/web_static/current")
-
         return True
 
     except:
