@@ -14,9 +14,10 @@ def do_deploy(archive_path):
 
     if not path.exists(archive_path):
         return False
-    
+
     splitter = archive_path.split('/')[1]
-    destination = "/data/web_static/releases/{}/".format(splitter.split('.')[0])
+    destination = "/data/web_static/releases/{}/".format(
+        splitter.split('.')[0])
 
     try:
         print("Executing task 'do_deploy'")
