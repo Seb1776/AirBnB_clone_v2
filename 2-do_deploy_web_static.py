@@ -2,7 +2,9 @@
 from os import path
 from fabric.api import env
 from fabric.api import put
+from fabric.api import hosts
 from fabric.api import run
+from fabric.api import local
 
 env.hosts = ["34.75.52.228", "18.212.233.99"]
 
@@ -12,19 +14,21 @@ def do_deploy(archive_path):
 
     if not path.exists(archive_path):
         return False
+    
+    splitter = archive_path.split('/')[1]
+    destination = "/data/web_static/releases/{}/".format(splitter.split('.')[0])
 
     try:
+        print("Executing task 'do_deploy'")
         put(archive_path, "/tmp/")
-        file = archive_path.split('/')[-1]
-        filedir = file.split('.')[0]
-        pathf = "/data/web_static/releases/" + filedir
-        run("mkdir -p " + pathf)
-        run("tar -xzf /tmp/" + file + " -C " + pathf)
-        run("rm /tmp/" + file)
-        run("mv " + pathf + "/web_static/* " + pathf)
-        run("rm -rf " + pathf + "/web_static/")
-        run("rm -rf /data/web_static/current")
-        run("ln -sf " + pathf + "/" + " /data/web_static/current")
+        run('mkdir -p {}'.format(destination))
+        run('tar -xzf /tmp/{} -C {}'.format(splitter, destination))
+        run('rm /tmp/{}'.format(splitter))
+        run('mv {}web_static/* {}'.format(destination, destination))
+        run('rm -rf {}web_static'.format(destination))
+        run('rm -rf /data/web_static/current')
+        run('ln -s {} /data/web_static/current'.format(destination))
+        print("New version deployed!")
         return True
 
     except:
